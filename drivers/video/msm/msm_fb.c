@@ -49,6 +49,7 @@
 #ifdef CONFIG_STATE_NOTIFIER
 #include <linux/state_notifier.h>
 #endif
+#include <linux/moduleparam.h>
 
 #ifdef CONFIG_SEC_DEBUG
 #include <mach/sec_debug.h>
@@ -63,6 +64,9 @@
 #ifdef CONFIG_FB_MSM_TRIPLE_BUFFER
 #define MSM_FB_NUM	3
 #endif
+
+int backlight_dimmer = 0;
+module_param(backlight_dimmer, int, 0755);
 
 static unsigned char *fbram;
 static unsigned char *fbram_phys;
@@ -204,11 +208,21 @@ static void msm_fb_set_bl_brightness(struct led_classdev *led_cdev,
 		bl_lvl = 0;
 	else if (value >= MAX_BACKLIGHT_BRIGHTNESS)
 		bl_lvl = mfd->panel_info.bl_max;
-	else
+	else if (backlight_dimmer > 0) {
+		if (value <= backlight_dimmer) {
+			bl_lvl = 1;
+		} else {
+			bl_lvl = (mfd->panel_info.bl_min + ((value - 1) * 2 *
+				(mfd->panel_info.bl_max - mfd->panel_info.bl_min) +
+				MAX_BACKLIGHT_BRIGHTNESS - 1) /
+				(MAX_BACKLIGHT_BRIGHTNESS - 1) / 2) - backlight_dimmer;
+		}
+	} else {
 		bl_lvl = mfd->panel_info.bl_min + ((value - 1) * 2 *
 			(mfd->panel_info.bl_max - mfd->panel_info.bl_min) +
 			MAX_BACKLIGHT_BRIGHTNESS - 1) /
 			(MAX_BACKLIGHT_BRIGHTNESS - 1) / 2;
+	}
 
         down(&mfd->sem);
 	msm_fb_set_backlight(mfd, bl_lvl);
