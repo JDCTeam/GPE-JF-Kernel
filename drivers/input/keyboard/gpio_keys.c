@@ -640,7 +640,7 @@ static void flip_cover_work(struct work_struct *work)
 			__func__, ddata->flip_cover);
 
 		input_report_switch(ddata->input,
-			SW_FLIP, ddata->flip_cover);
+			SW_LID, ddata->flip_cover);
 		input_sync(ddata->input);
 	} else {
 		printk(KERN_DEBUG "%s : Value is not same!\n", __func__);
@@ -650,7 +650,7 @@ static void flip_cover_work(struct work_struct *work)
 	
 	printk(KERN_DEBUG "[keys_no_delay] %s : %d\n",__func__, ddata->flip_cover);
 
-	input_report_switch(ddata->input, SW_FLIP, ddata->flip_cover);
+	input_report_switch(ddata->input, SW_LID, ddata->flip_cover);
 	input_sync(ddata->input);
 #endif
 }
@@ -941,7 +941,7 @@ static int __devinit gpio_keys_probe(struct platform_device *pdev)
 	input->dev.parent = &pdev->dev;
 #ifdef CONFIG_SENSORS_HALL
 	input->evbit[0] |= BIT_MASK(EV_SW);
-	input_set_capability(input, EV_SW, SW_FLIP);
+	input_set_capability(input, EV_SW, SW_LID);
 #endif
 	input->open = gpio_keys_open;
 	input->close = gpio_keys_close;
