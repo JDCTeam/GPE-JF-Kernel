@@ -70,7 +70,7 @@ static struct workqueue_struct *workqueue;
  * So we allow it it to be disabled.
  */
 
-bool use_spi_crc = 0;
+bool use_spi_crc = 1;
 
 module_param(use_spi_crc, bool, 0);
 
