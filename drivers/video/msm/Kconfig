@@ -1133,6 +1133,11 @@ config ESD_ERR_FG_RECOVERY
 	bool "ESD RECOVERY BY ERR_FG"
 	default n
 
+config LCD_NOTIFY
+	depends on !FB_MSM_MDSS
+	bool "Enable LCD Notifier Helper"
+	default y
+
 if FB_MSM_MDSS
 	source "drivers/video/msm/mdss/Kconfig"
 endif

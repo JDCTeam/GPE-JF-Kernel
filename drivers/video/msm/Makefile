@@ -2,7 +2,7 @@ ifeq ($(CONFIG_FB_MSM_MDSS),y)
 obj-y += mdss/
 else
 obj-y := msm_fb.o
-obj-y += lcd_notify.o
+obj-$(CONFIG_LCD_NOTIFY) += lcd_notify.o
 obj-$(CONFIG_USE_VFB) += msm_vfb.o
 obj-$(CONFIG_SEC_DEBUG_MDP) += sec_debug_mdp.o
 
