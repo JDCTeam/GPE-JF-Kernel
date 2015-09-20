@@ -11,11 +11,6 @@ delete_recursive("/system/app/STweaks/STweaks.apk");
 delete_recursive("/system/priv-app/STweaks/STweaks.apk");
 delete_recursive("/system/priv-app/STweaks.apk");
 
-ui_print("Copying modules");
-ui_print("");
-package_extract_dir("system", "/system");
-set_perm_recursive(0, 0, 0755, 0644, "/system/lib/modules");
-
 ui_print("Extracting files");
 
 delete_recursive("/tmp/boot.img");

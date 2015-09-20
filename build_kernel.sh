@@ -47,10 +47,6 @@ DIST="$KERNEL_DIR"/dist
 # Kernel filename
 FILENAME=GPE-JF_Stock_Kernel.zip
 
-# Modules folder
-MODULES_DIR="$DIST"/system/lib/modules
-
-
 # Ready to build
 echo -e "\e[1;91mBuilding JFLTE-GPE stock kernel"
 echo -e "\e[0m "
@@ -87,25 +83,6 @@ if [ -e "$KERNEL_DIR"/arch/arm/boot/zImage ];then
 	if [ -e "$DIST"/zImage ]; then
 		rm "$DIST"/zImage
 	fi;
-
-	if [ ! -e "$MODULES_DIR" ];then
-		echo " "
-		echo -e "\e[1;91mCreating modules directory"
-		echo -e "\e[0m "
-		mkdir -p "$MODULES_DIR"
-	else 
-		echo " "
-		echo -e "\e[1;91mDeleting old modules"
-		echo -e "\e[0m "
-		rm -rf "$MODULES_DIR"/*
-	fi
-
-	echo " "
-	echo -e "\e[1;91mCopying new modules"
-	echo -e "\e[0m "
-	for i in `find $KERNEL_DIR -name '*.ko'`; do
-		cp -av $i "$MODULES_DIR"/;
-	done;
 
 	if [ -e "$KERNEL_DIR"/"$FILENAME" ];then
 		echo " "
