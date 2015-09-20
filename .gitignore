@@ -166,3 +166,5 @@ arch/arm/boot/compressed/piggy.xzkern
 *.orig
 *~
 \#*#
+
+*boot.img
