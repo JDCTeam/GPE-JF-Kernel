@@ -91,12 +91,12 @@
 #define __devexitconst   __section(.devexit.rodata)
 
 /* Used for HOTPLUG_CPU */
-#define        __cold
-#define
-#define
-#define        __exitused __cold
-#define
-#define
+#define __cpuinit        __cold
+#define __cpuinitdata
+#define __cpuinitconst
+#define __cpuexit        __exitused __cold
+#define __cpuexitdata
+#define __cpuexitconst
 
 /* Used for MEMORY_HOTPLUG */
 #define __meminit        __section(.meminit.text) __cold notrace
