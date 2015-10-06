@@ -5337,7 +5337,7 @@ static void __init apq8064_common_init(void)
 	apq8064_init_buses();
 
 #ifdef CONFIG_CPU_FREQ_GOV_UBERDEMAND
-	set_second_phase_freq(1458000);
+	set_second_phase_freq(CONFIG_CPU_FREQ_GOV_UBERDEMAND_SECOND_PHASE_FREQ);
 #endif
 
 	platform_add_devices(early_common_devices,
