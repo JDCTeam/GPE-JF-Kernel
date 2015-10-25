@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright 2015 Matthew Booth
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -34,9 +34,6 @@ export ARCH=arm
 
 # Number of CPU's available
 NUMBEROFCPUS=$(expr `grep processor /proc/cpuinfo | wc -l` + 1);
-
-# Build variant
-VARIANT=eur
 
 # Ramdisk location
 INITRAMFS="$KERNEL_DIR"/../ramdisk
@@ -75,7 +72,7 @@ if [ -e "$KERNEL_DIR"/arch/arm/boot/zImage ];then
 	cp "$KERNEL_DIR"/arch/arm/boot/zImage "$DIST"/zImage
 	./mkbootfs "$INITRAMFS" | gzip > "$DIST"/ramdisk.gz
 	./mkbootimg --cmdline 'console=null androidboot.hardware=jgedlte user_debug=22 msm_rtb.filter=0x3F ehci-hcd.park=3 androidboot.bootdevice=msm_sdcc.1 androidboot.selinux=permissive' --kernel "$DIST"/zImage --ramdisk "$DIST"/ramdisk.gz --base 0x80200000 --pagesize 2048 --ramdisk_offset 0x02000000 --output "$DIST"/boot.img
-	
+
 	if [ -e "$DIST"/ramdisk.gz ]; then
 		rm "$DIST"/ramdisk.gz
 	fi;
@@ -94,7 +91,7 @@ if [ -e "$KERNEL_DIR"/arch/arm/boot/zImage ];then
 	echo " "
 	echo -e "\e[1;91mPacking zip"
 	echo -e "\e[0m "
-	cd "$DIST"	
+	cd "$DIST"
 	zip -r "$KERNEL_DIR"/../dist/$FILENAME .
 	cd "$KERNEL_DIR"
 
@@ -108,3 +105,4 @@ else
 	echo -e "\e[0m "
 	exit 1
 fi
+
