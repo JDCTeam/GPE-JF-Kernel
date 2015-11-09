@@ -42,10 +42,10 @@ INITRAMFS="$KERNEL_DIR"/../ramdisk
 DIST="$KERNEL_DIR"/dist
 
 # Kernel filename
-FILENAME=GPE-JF_Stock_Kernel.zip
+FILENAME=GPE-JF_Cake_Kernel.zip
 
 # Ready to build
-echo -e "\e[1;91mBuilding JFLTE-GPE stock kernel"
+echo -e "\e[1;91mBuilding JFLTE-GPE Cake Kernel"
 echo -e "\e[0m "
 
 if [ -e "$KERNEL_DIR"/arch/arm/boot/zImage ];then

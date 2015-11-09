@@ -1,4 +1,4 @@
-ui_print("Installing stock GPE Kernel...");
+ui_print("Installing Cake GPE Kernel...");
 
 ui_print("Mounting system");
 
