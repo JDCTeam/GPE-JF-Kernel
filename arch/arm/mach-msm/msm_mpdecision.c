@@ -24,7 +24,7 @@
  */
 
 #include "msm_mpdecision.h"
-#ifndef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_LCD_NOTIFY
 #include <linux/lcd_notify.h>
 #else
 #include <linux/earlysuspend.h>
@@ -51,7 +51,7 @@ DEFINE_PER_CPU(struct msm_mpdec_cpudata_t, msm_mpdec_cpudata);
 EXPORT_PER_CPU_SYMBOL_GPL(msm_mpdec_cpudata);
 
 static bool mpdec_suspended = false;
-#ifndef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_LCD_NOTIFY
 static struct notifier_block msm_mpdec_lcd_notif;
 #endif
 static struct delayed_work msm_mpdec_work;
@@ -612,7 +612,7 @@ static void msm_mpdec_resume(struct work_struct * msm_mpdec_suspend_work) {
 }
 static DECLARE_WORK(msm_mpdec_resume_work, msm_mpdec_resume);
 
-#ifndef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_LCD_NOTIFY
 static int msm_mpdec_lcd_notifier_callback(struct notifier_block *this,
 				unsigned long event, void *data) {
 	pr_debug("%s: event = %lu\n", __func__, event);
@@ -1218,7 +1218,7 @@ static int __init msm_mpdec_init(void) {
 	pr_info(MPDEC_TAG"%s init complete.", __func__);
 
 
-#ifndef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_LCD_NOTIFY
 	msm_mpdec_lcd_notif.notifier_call = msm_mpdec_lcd_notifier_callback;
 	if (lcd_register_client(&msm_mpdec_lcd_notif) != 0) {
 		pr_err("%s: Failed to register lcd callback\n", __func__);
@@ -1234,7 +1234,7 @@ static int __init msm_mpdec_init(void) {
 late_initcall(msm_mpdec_init);
 
 void msm_mpdec_exit(void) {
-#ifndef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_LCD_NOTIFY
 	lcd_unregister_client(&msm_mpdec_lcd_notif);
 #endif
 #ifdef CONFIG_MSM_MPDEC_INPUTBOOST_CPUMIN
