@@ -150,6 +150,10 @@
 #include <asm/kexec.h>
 #endif
 
+#ifdef CONFIG_CPU_FREQ_GOV_UBERDEMAND
+int set_second_phase_freq(int cpufreq);
+#endif
+
 #if defined(CONFIG_SENSORS_SSP)
 enum {
 	SNS_PWR_OFF,
@@ -5315,6 +5319,10 @@ static void __init apq8064_common_init(void)
 	apq8064_device_otg.dev.platform_data = &msm_otg_pdata;
 	apq8064_ehci_host_init();
 	apq8064_init_buses();
+
+#ifdef CONFIG_CPU_FREQ_GOV_UBERDEMAND
+	set_second_phase_freq(1458000);
+#endif
 
 	platform_add_devices(early_common_devices,
 				ARRAY_SIZE(early_common_devices));
