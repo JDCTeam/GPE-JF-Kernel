@@ -3,6 +3,7 @@ obj-y += mdss/
 else
 obj-y := msm_fb.o
 obj-$(CONFIG_LCD_NOTIFY) += lcd_notify.o
+obj-$(CONFIG_STATE_NOTIFIER) += state_notifier.o
 obj-$(CONFIG_USE_VFB) += msm_vfb.o
 obj-$(CONFIG_SEC_DEBUG_MDP) += sec_debug_mdp.o
 

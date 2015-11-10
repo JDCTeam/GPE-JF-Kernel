@@ -1138,6 +1138,10 @@ config LCD_NOTIFY
 	bool "Enable LCD Notifier Helper"
 	default y
 
+config STATE_NOTIFIER
+        bool "State Notifier"
+	default y
+
 if FB_MSM_MDSS
 	source "drivers/video/msm/mdss/Kconfig"
 endif

@@ -46,6 +46,9 @@
 #include <linux/sw_sync.h>
 #include <linux/file.h>
 #include <linux/lcd_notify.h>
+#ifdef CONFIG_STATE_NOTIFIER
+#include <linux/state_notifier.h>
+#endif
 
 #ifdef CONFIG_SEC_DEBUG
 #include <mach/sec_debug.h>
@@ -1092,6 +1095,9 @@ static int msm_fb_blank_sub(int blank_mode, struct fb_info *info,
 		}
 		mutex_unlock(&power_state_chagne);
 		lcd_notifier_call_chain(LCD_EVENT_ON_END, NULL);
+#ifdef CONFIG_STATE_NOTIFIER
+		state_resume();
+#endif
 		break;
 
 	case FB_BLANK_VSYNC_SUSPEND:
@@ -1146,6 +1152,9 @@ static int msm_fb_blank_sub(int blank_mode, struct fb_info *info,
 		}
 		mutex_unlock(&power_state_chagne);
 		lcd_notifier_call_chain(LCD_EVENT_OFF_END, NULL);
+#ifdef CONFIG_STATE_NOTIFIER
+		state_suspend();
+#endif
 		break;
 	}
 
