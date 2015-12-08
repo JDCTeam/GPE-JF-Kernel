@@ -234,11 +234,7 @@ static struct mxt_platform_data mxt_data = {
 	.num_ynode = YNODE,
 	.max_x = 4095,
 	.max_y = 4095,
-#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
-	.irqflags = IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_NO_SUSPEND,
-#else
 	.irqflags = IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-#endif
 	.boot_address = MXT_BOOT_ADDRESS,
 	.firmware_name = MXT_FIRMWARE_NAME,
 	.project_name = MXT_PROJECT_NAME,
