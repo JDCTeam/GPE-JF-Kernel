@@ -33,8 +33,8 @@
  */
 
 #define DEF_FREQUENCY_DOWN_DIFFERENTIAL		(10)
-#define DEF_FREQUENCY_UP_THRESHOLD		(80)
-#define DEF_SAMPLING_DOWN_FACTOR		(1)
+#define DEF_FREQUENCY_UP_THRESHOLD		(90)
+#define DEF_SAMPLING_DOWN_FACTOR		(4)
 #define MAX_SAMPLING_DOWN_FACTOR		(100000)
 #define MICRO_FREQUENCY_DOWN_DIFFERENTIAL	(3)
 #define MICRO_FREQUENCY_UP_THRESHOLD		(95)
@@ -166,11 +166,13 @@ static struct bds_tuners {
 	unsigned int gpu_busy_clr_threshold;
 #endif
 } bds_tuners_ins = {
+	.sampling_rate = 50000,
 	.up_threshold = DEF_FREQUENCY_UP_THRESHOLD,
 	.sampling_down_factor = DEF_SAMPLING_DOWN_FACTOR,
 	.down_differential = DEF_FREQUENCY_DOWN_DIFFERENTIAL,
 	.ignore_nice = 0,
 	.powersave_bias = 0,
+	.io_is_busy = 1,
 #ifdef CONFIG_CPU_FREQ_GOV_BADASS_2_PHASE
 	.two_phase_freq = 0,
 	.semi_busy_threshold = SEMI_BUSY_THRESHOLD,
