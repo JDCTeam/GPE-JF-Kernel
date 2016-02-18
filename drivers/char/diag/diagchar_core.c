@@ -1,4 +1,4 @@
-/* Copyright (c) 2008-2014, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2008-2015, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -42,6 +42,7 @@
 #include "diag_debugfs.h"
 #include "diag_masks.h"
 #include "diagfwd_bridge.h"
+#include <linux/of.h>
 
 MODULE_DESCRIPTION("Diag Char Driver");
 MODULE_LICENSE("GPL v2");
@@ -73,6 +74,7 @@ static unsigned int threshold_client_limit = 30;
 /* This is the maximum number of pkt registrations supported at initialization*/
 int diag_max_reg = 600;
 int diag_threshold_reg = 750;
+static int enable_diag;
 
 /* Timer variables */
 static struct timer_list drain_timer;
@@ -462,7 +464,7 @@ int diag_copy_remote(char __user *buf, size_t count, int *pret, int *pnum_data)
 					i, (unsigned int)hsic_buf_tbl[i].buf,
 					hsic_buf_tbl[i].length);
 				num_data++;
-
+#ifndef CONFIG_DIAGFWD_REMOTE_PROC_TEMP
 				/* Copy the negative token */
 				if (copy_to_user(buf+ret,
 					&remote_token, 4)) {
@@ -470,7 +472,7 @@ int diag_copy_remote(char __user *buf, size_t count, int *pret, int *pnum_data)
 						goto drop_hsic;
 				}
 				ret += 4;
-
+#endif
 				/* Copy the length of data being passed */
 				if (copy_to_user(buf+ret,
 					(void *)&(hsic_buf_tbl[i].length),
@@ -840,6 +842,7 @@ int diag_switch_logging(unsigned long ioarg)
 				pr_err("socket process, status: %d\n",
 					status);
 			}
+			driver->socket_process = NULL;
 		}
 	} else if (driver->logging_mode == SOCKET_MODE) {
 		driver->socket_process = current;
@@ -853,7 +856,14 @@ int diag_switch_logging(unsigned long ioarg)
 		diag_clear_hsic_tbl();
 		driver->mask_check = 0;
 		driver->logging_mode = MEMORY_DEVICE_MODE;
+
+		/*  sub_logging_mode is for MDM, 
+		 *  the other is for MSM8960/MSM8930 */
+#if defined(CONFIG_MACH_JF)
 		driver->sub_logging_mode = UART_MODE;
+#else
+		driver->sub_logging_mode = NO_LOGGING_MODE;
+#endif
 	} else
 		driver->sub_logging_mode = NO_LOGGING_MODE;
 
@@ -1461,6 +1471,7 @@ static int diagchar_write(struct file *file, const char __user *buf,
 			return -EIO;
 		}
 		/* Check for proc_type */
+
 		remote_proc = diag_get_remote(*(int *)buf_copy);
 
 		if (!remote_proc) {
@@ -1584,6 +1595,7 @@ static int diagchar_write(struct file *file, const char __user *buf,
 			return -EIO;
 		}
 		/* Check for proc_type */
+#ifndef CONFIG_DIAGFWD_REMOTE_PROC_TEMP
 		remote_proc = diag_get_remote(*(int *)user_space_data);
 
 		if (remote_proc) {
@@ -1596,7 +1608,9 @@ static int diagchar_write(struct file *file, const char __user *buf,
 			payload_size -= 4;
 			buf += 4;
 		}
-
+#else
+		remote_proc = MDM;
+#endif
 		/* Check masks for On-Device logging */
 		if (driver->mask_check) {
 			if (!mask_request_validate(user_space_data +
@@ -1691,7 +1705,7 @@ static int diagchar_write(struct file *file, const char __user *buf,
 			}
 		}
 #endif
-#if 0
+#if !defined(CONFIG_MACH_JF)
 		/* send masks to 8k now */
 		if (!remote_proc)
 			diag_process_hdlc((void *)
@@ -2006,6 +2020,14 @@ void diagfwd_bridge_fn(int type)
 inline void diagfwd_bridge_fn(int type) { }
 #endif
 
+static int check_diagchar_enabled(char *str)
+{
+	get_option(&str, &enable_diag);
+	pr_debug("%s : enable_diag = %s\n", __func__, ((enable_diag) ? "Yes":"No"));
+	return 0;
+}
+__setup("diag=", check_diagchar_enabled);
+
 static int __init diagchar_init(void)
 {
 	dev_t dev;
@@ -2013,6 +2035,12 @@ static int __init diagchar_init(void)
 
 	pr_debug("diagfwd initializing ..\n");
 	ret = 0;
+
+	if (!enable_diag) {
+		pr_info("diagchar_core isn't enabled.\n");
+		return -EPERM;
+	}
+
 	driver = kzalloc(sizeof(struct diagchar_dev) + 5, GFP_KERNEL);
 #ifdef CONFIG_DIAGFWD_BRIDGE_CODE
 	diag_bridge = kzalloc(MAX_BRIDGES * sizeof(struct diag_bridge_dev),
@@ -2092,7 +2120,7 @@ static int __init diagchar_init(void)
 			goto fail;
 	} else {
 		printk(KERN_INFO "kzalloc failed\n");
-		goto fail;
+		goto fail2;
 	}
 
 	pr_info("diagchar initialized now");
@@ -2107,6 +2135,8 @@ fail:
 	diag_masks_exit();
 	diag_sdio_fn(EXIT);
 	diagfwd_bridge_fn(EXIT);
+	kfree(driver);
+fail2:
 	return -1;
 }
 
